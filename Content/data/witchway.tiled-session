@@ -1,0 +1,56 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "C:/Users/cj28/Documents/Coding-Projects/WitchWay/ground.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/cj28/Documents/Coding-Projects/WitchWay/test.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 387,
+                "y": 157.90909090909093
+            }
+        },
+        "C:/Users/cj28/Documents/Coding-Projects/WitchWay/test_tile.tsx": {
+            "scaleInDock": 1
+        },
+        "ground.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level.tmx": {
+            "scale": 16,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 82.90625,
+                "y": 294.84375
+            }
+        }
+    },
+    "last.imagePath": "C:/Users/cj28/source/repos/WitchWay/WitchWay/Content/data/images",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+    ],
+    "project": "witchway.tiled-project",
+    "recentFiles": [
+        "level.tmx",
+        "C:/Users/cj28/Documents/Coding-Projects/WitchWay/test.tmx",
+        "ground.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
