@@ -25,11 +25,20 @@ namespace WitchWay
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 1200;
-            _graphics.PreferredBackBufferHeight = 800;
+            SetFullscreen();
             Window.AllowUserResizing = true;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+        }
+
+        private void SetFullscreen()
+        {
+            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            _graphics.HardwareModeSwitch = true;
+
+            _graphics.IsFullScreen = true;
+            _graphics.ApplyChanges();
         }
 
         protected override void Initialize()
@@ -40,12 +49,12 @@ namespace WitchWay
             collidable = new SpriteGroup();
 
             base.Initialize();
-            TilemapObject playerObject = tilemap.GetObjectGroup(Settings.layers["positions"]).GetNamedObjects(Settings.objects["player"])[0];
-            Vector2 playerPosition = new Vector2(playerObject.x, playerObject.y);
+            TilemapObject playerObject = tilemap.GetObjectGroup(Settings.Layers["positions"]).GetNamedObjects(Settings.Objects["player"])[0];
+            Vector2 playerPosition = new Vector2(playerObject.X, playerObject.Y);
             player = new Player(playerPosition, playerSpriteSheet, new Sprite(), collidable);
 
-            allSprites.Add(player.sprite);
-            foreach (Sprite tile in tilemap.GetLayer(Settings.layers["ground"]))
+            allSprites.Add(player.Sprite);
+            foreach (Sprite tile in tilemap.GetLayer(Settings.Layers["ground"]))
             {
                 allSprites.Add(tile);
                 collidable.Add(tile);
@@ -72,8 +81,6 @@ namespace WitchWay
                 _graphics.ToggleFullScreen();
             }
 
-            Settings.WIDTH = _graphics.PreferredBackBufferWidth;
-            Settings.HEIGHT = _graphics.PreferredBackBufferHeight;
             player.Update(gameTime, Keyboard.GetState());
             base.Update(gameTime);
         }

@@ -78,3 +78,4 @@ C:\Users\cj28\source\repos\WitchWay\WitchWay\bin\Debug\net6.0\Content\images\pla
 C:\Users\cj28\source\repos\WitchWay\WitchWay\bin\Debug\net6.0\Content\images\player\right_jump\0.xnb
 C:\Users\cj28\source\repos\WitchWay\WitchWay\bin\Debug\net6.0\Content\images\player\right_jump\1.xnb
 C:\Users\cj28\source\repos\WitchWay\WitchWay\bin\Debug\net6.0\Content\images\player\right_jump\2.xnb
+C:\Users\cj28\source\repos\WitchWay\WitchWay\obj\Debug\net6.0\WitchWay.sourcelink.json

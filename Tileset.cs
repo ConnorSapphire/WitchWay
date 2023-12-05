@@ -14,8 +14,8 @@ namespace WitchWay
         public int tileWidth;
         public int tileHeight;
         public int tileCount;
-        public int columns;
-        public Texture2D texture;
+        public int Columns;
+        public Texture2D Texture;
         public Tileset(string name, int firstgid, int tileWidth, int tileHeight, int tileCount, int columns, Texture2D texture) 
         {
             this.name = name;
@@ -23,8 +23,8 @@ namespace WitchWay
             this.tileWidth = tileWidth;
             this.tileHeight = tileHeight;
             this.tileCount = tileCount;
-            this.columns = columns;
-            this.texture = texture;
+            this.Columns = columns;
+            this.Texture = texture;
         }
     }
 }

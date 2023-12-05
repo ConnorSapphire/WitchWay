@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,155 +13,312 @@ namespace WitchWay
 {
     internal class Player
     {
-        private Dictionary<string, List<Texture2D>> spriteSheet;
+        private Dictionary<string, List<Texture2D>> SpriteSheet;
 
-        public Sprite sprite;
-        private Texture2D texture;
-        private double currentFrame;
-        private int rows;
-        private int columns;
-        private int totalFrames;
+        public Sprite Sprite;
+        private Texture2D Texture;
+        private double CurrentFrame;
+        private int TotalFrames;
 
-        private int speed;
-        private int gravity;
-        private bool onGround = true;
-        private int direction;
-        private Vector2 position;
-        private string state;
+        private double VelocityX;
+        private double VelocityY;
+        private bool OnGround = true;
+        private bool jumpUnreleased = false;
+        private double jumped = 0;
 
-        private SpriteGroup collidable;
-        public Player(Vector2 position, Dictionary<string, List<Texture2D>> spriteSheet, Sprite sprite, SpriteGroup collidable) 
+        private int MaxSpeed;
+        private Vector2 Position;
+        private string State;
+
+        private SpriteGroup Collidables;
+        public Player(Vector2 Position, Dictionary<string, List<Texture2D>> SpriteSheet, Sprite Sprite, SpriteGroup Collidables)
         {
-            this.spriteSheet = spriteSheet;
-            this.currentFrame = 0;
+            this.SpriteSheet = SpriteSheet;
+            this.CurrentFrame = 0;
 
-            this.speed = Settings.speed;
-            this.gravity = 0;
-            this.direction = 1;
-            this.position = position;
-            this.state = "right_idle";
-            this.texture = spriteSheet[state][(int) currentFrame];
-            this.sprite = sprite;
+            this.MaxSpeed = Settings.Speed;
+            this.VelocityX = 0;
+            this.VelocityY = 0;
+            this.Position = Position;
+
+            this.State = "right_idle";
+            this.Texture = SpriteSheet[State][(int)CurrentFrame];
+            this.Sprite = Sprite;
             UpdateSprite();
-            this.position.Y -= this.sprite.Height;
 
-            this.collidable = collidable;
+            this.Position.Y -= this.Sprite.Height;
+            UpdateSprite();
+
+            this.Collidables = Collidables;
         }
 
         public void UpdateSprite()
         {
-            sprite.texture = texture;
-            sprite.pos = position;
-            sprite.size = new Vector2(texture.Width, texture.Height);
-            sprite.Width = texture.Width;
-            sprite.Height = texture.Height;
-            sprite.rect = new Rectangle((int) sprite.pos.X, (int) sprite.pos.Y, sprite.Width, sprite.Height);
-            sprite.source = new Rectangle(0,0, sprite.Width, sprite.Height);
-            sprite.z = 1;
+            Sprite.Texture = Texture;
+            Sprite.Position = Position;
+            Sprite.Size = new Vector2(Texture.Width, Texture.Height);
+            Sprite.Width = Texture.Width;
+            Sprite.Height = Texture.Height;
+            Sprite.Rect = new Rectangle((int)Sprite.Position.X, (int)Sprite.Position.Y, Sprite.Width, Sprite.Height);
+            Sprite.Source = new Rectangle(0, 0, Sprite.Width, Sprite.Height);
+            Sprite.Z = 1;
         }
 
-        public void Input(GameTime gameTime, KeyboardState keys)
+        private void Input(GameTime GameTime, KeyboardState Keys)
         {
-            if (keys.IsKeyDown(Keys.Left))
+            double DeltaTime = GameTime.ElapsedGameTime.TotalSeconds;
+
+            if (Keys.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Left))
             {
-                if (onGround)
+                if (OnGround)
                 {
-                    state = "left_run";
+                    State = "left_run";
                 }
                 else
                 {
-                    state = "left_jump";
+                    State = "left_jump";
                 }
-                direction = -1;
+                VelocityX = -MaxSpeed;
             }
-            else if (keys.IsKeyDown(Keys.Right))
+            else if (Keys.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Right))
             {
-                if (onGround)
+                if (OnGround)
                 {
-                    state = "right_run";
-                } else
-                {
-                    state = "right_jump";
+                    State = "right_run";
                 }
-                direction = 1;
+                else
+                {
+                    State = "right_jump";
+                }
+                VelocityX = MaxSpeed;
             }
             else
             {
-                state = state.Split("_")[0] + "_idle";
-                direction = 0;
+                State = State.Split("_")[0] + "_idle";
+                VelocityX = 0;
             }
 
-            if (keys.IsKeyDown(Keys.Up) && onGround)
+            if (Keys.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Z) && (OnGround | jumpUnreleased))
             {
-                state = state.Split("_")[0] + "_jump";
-                onGround = false;
-                gravity = Settings.jump;
+                State = State.Split("_")[0] + "_jump";
+                OnGround = false;
+                VelocityY = Settings.Jump;
+                jumpUnreleased = true;
+                jumped += VelocityY * DeltaTime;
+            }
+            else
+            {
+                jumpUnreleased = false;
+                jumped = 0;
+                VelocityY =  (-Settings.Jump);
             }
 
-            float deltaTime = (float) gameTime.ElapsedGameTime.TotalSeconds;
-            position.X += direction * speed * deltaTime;
-            position.Y += gravity * deltaTime;
-            UpdateSprite();
+            if (jumpUnreleased && jumped < -Settings.JumpHeight)
+            {
+                VelocityY =  (-Settings.Jump);
+                jumpUnreleased = false;
+                jumped = 0;
+            }
+
+            if (OnGround)
+                VelocityY = 0;
+
+            if (Keys.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Down))
+            {
+                VelocityY = MaxSpeed;
+            }
+            else if (Keys.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Up))
+            {
+                VelocityY = -MaxSpeed;
+            }
+
         }
 
-        public void Collision()
+        private void Move(GameTime GameTime)
         {
-            List<Sprite> collisions = collidable.Collision(sprite);
-            foreach (Sprite collision in collisions)
-            {
-                if (position.X > collision.pos.X + (collision.Width / 2) && position.X < collision.pos.X + collision.Width)
-                {
-                    position.X = collision.pos.X + collision.Width;
-                }
-                else if (position.X + sprite.Width <= collision.pos.X + (collision.Width / 2) && position.X + sprite.Width > collision.pos.X)
-                {
-                    position.X = collision.pos.X - sprite.Width;
-                }
-            }
-            UpdateSprite();
+            double DeltaTime = GameTime.ElapsedGameTime.TotalSeconds;
 
-            collisions = collidable.Collision(sprite);
-            foreach (Sprite collision in collisions)
-            { 
-                if (position.Y > collision.pos.Y + (collision.Height / 2) && position.Y <  collision.pos.Y + collision.Height)
-                {
-                    position.Y = collision.pos.Y + collision.Height;
-                }
-                else if (position.Y + sprite.Height <= collision.pos.Y + (collision.Height / 2) && position.Y + sprite.Height > collision.pos.Y)
-                {
-                    position.Y = collision.pos.Y - sprite.Height;
-                    onGround = true;
-                    gravity = 0;
-                }
-            }
-            UpdateSprite();
+            double XDist = VelocityX * DeltaTime;
+            double YDist = VelocityY * DeltaTime;
+
+            double Distance = Math.Sqrt((Math.Pow(XDist, 2) + Math.Pow(YDist, 2.0)));
+            double Theta = Math.Atan2(YDist, XDist);
+
+            CollisionDetection(Distance, Theta);
         }
 
-        public void Update(GameTime gameTime, KeyboardState keys)
+        private void CollisionDetection(double Distance, double Direction)
+        {
+            (bool, Vector2, Sprite, double, double, double) CornerCollision = Support.RaycastRect(Sprite.Rect, Distance, Direction, Collidables, Sprite.Rect.Width / 2);
+
+            if (!CornerCollision.Item1)
+            {
+                Position.X = CornerCollision.Item2.X;
+                Position.Y = CornerCollision.Item2.Y;
+                return;
+            }
+
+            CalculateCollisionOffset(Direction, CornerCollision.Item2, CornerCollision.Item3, CornerCollision.Item5, CornerCollision.Item6);
+        }
+
+        private void CalculateCollisionOffset(double Direction, Vector2 CollisionPosition, Sprite Tile, double OffsetX, double OffsetY)
+        {
+            double R, X, Y, DeltaX, DeltaY;
+
+            float TileTop = Tile.Position.Y;
+            float TileBottom = TileTop + Tile.Height;
+
+            float TileLeft = Tile.Position.X;
+            float TileRight = TileLeft + Tile.Width;
+            
+            bool Left = Math.Abs(Direction) <= Math.PI / 2;
+            bool Down = Direction >= 0;
+
+            if (Left && Down)
+            {
+                if (Math.Cos(Direction) != 0)
+                {
+                    R = (TileLeft - CollisionPosition.X) / Math.Cos(Direction);
+                    DeltaY = R * Math.Sin(Direction);
+                    Y = CollisionPosition.Y + DeltaY;
+                    if (Y >= TileTop && Y <= TileBottom)
+                    {
+                        Position.X = (float)(TileLeft - OffsetX);
+                        Position.Y = (float)(Y - OffsetY);
+                        return;
+                    }
+                }
+
+                if (Math.Sin(Direction) != 0)
+                {
+                    R = (TileTop - CollisionPosition.Y) / Math.Sin(Direction);
+                    DeltaX = R * Math.Cos(Direction);
+                    X = CollisionPosition.X + DeltaX;
+                    if (X >= TileLeft && X <= TileRight)
+                    {
+                        Position.X = (float)(X - OffsetX);
+                        Position.Y = (float)(TileTop - OffsetY);
+                        return;
+                    }
+                }
+            }
+            else if (!Left && Down)
+            {
+                if (Math.Cos(Direction) != 0)
+                {
+                    R = (TileRight - CollisionPosition.X) / Math.Cos(Direction);
+                    DeltaY = R * Math.Sin(Direction);
+                    Y = CollisionPosition.Y + DeltaY;
+                    if (Y >= TileTop && Y <= TileBottom)
+                    {
+                        Position.X = (float)(TileRight - OffsetX);
+                        Position.Y = (float)(Y - OffsetY);
+                        return;
+                    }
+                }
+
+                if (Math.Sin(Direction) != 0)
+                {
+                    R = (TileTop - CollisionPosition.Y) / Math.Sin(Direction);
+                    DeltaX = R * Math.Cos(Direction);
+                    X = CollisionPosition.X - DeltaX;
+                    if (X >= TileLeft && X <= TileRight)
+                    {
+                        Position.X = (float)(X - OffsetX);
+                        Position.Y = (float)(TileTop - OffsetY);
+                        return;
+                    }
+                }
+            }
+            else if (Left && !Down)
+            {
+                if (Math.Cos(Direction) != 0)
+                {
+                    R = (TileLeft - CollisionPosition.X) / Math.Cos(Direction);
+                    DeltaY = R * Math.Sin(Direction);
+                    Y = CollisionPosition.Y + DeltaY;
+                    if (Y >= TileTop && Y <= TileBottom)
+                    {
+                        Position.X = (float)(TileLeft - OffsetX);
+                        Position.Y = (float)(Y - OffsetY);
+                        return;
+                    }
+                }
+
+                if (Math.Sin(Direction) != 0)
+                {
+                    R = (TileBottom - CollisionPosition.Y) / Math.Sin(Direction);
+                    DeltaX = R * Math.Cos(Direction);
+                    X = CollisionPosition.X + DeltaX;
+                    if (X >= TileLeft && X <= TileRight)
+                    {
+                        Position.X = (float)(X - OffsetX);
+                        Position.Y = (float)(TileBottom + 1 - OffsetY);
+                        return;
+                    }
+                }
+            }
+            else if (!Left && !Down)
+            {
+                if (Math.Cos(Direction) != 0)
+                {
+                    R = (TileRight - CollisionPosition.X) / Math.Cos(Direction);
+                    DeltaY = R * Math.Sin(Direction);
+                    Y = CollisionPosition.Y + DeltaY;
+                    if (Y >= TileTop && Y <= TileBottom)
+                    {
+                        Position.X = (float)(TileRight - OffsetX);
+                        Position.Y = (float)(Y - OffsetY);
+                        return;
+                    }
+                }
+
+                if (Math.Sin(Direction) != 0)
+                {
+                    R = (TileBottom - CollisionPosition.Y) / Math.Sin(Direction);
+                    DeltaX = R * Math.Cos(Direction);
+                    X = CollisionPosition.X - DeltaX;
+                    if (X >= TileLeft && X <= TileRight)
+                    {
+                        Position.X = (float)(X - OffsetX);
+                        Position.Y = (float)(TileBottom + 1 - OffsetY);
+                        return;
+                    }
+                }
+            }
+        }  
+
+        private bool IsOnGround()
+        {
+            OnGround = true;
+            return true;
+        }
+
+        private bool IsOnWall()
+        {
+            return false;
+        }
+
+        public void Update(GameTime GameTime, KeyboardState Keys)
         {
             // update player state
-            Input(gameTime, keys);
-            Collision();
-            if (!onGround && gravity > 0)
-            {
-                gravity -= 50;
-            } 
-            else if (!onGround && gravity <= 0)
-            {
-                gravity += 150;
-            } 
+            IsOnGround();
+            IsOnWall();
+            Input(GameTime, Keys);
+            Move(GameTime);
+            UpdateSprite();
 
             // get current frame
-            totalFrames = spriteSheet[state].Count;
-            currentFrame += 12 * gameTime.ElapsedGameTime.TotalSeconds;
-            if (state.Split("_")[1] == "jump" && currentFrame == totalFrames)
+            TotalFrames = SpriteSheet[State].Count;
+            CurrentFrame += 12 * GameTime.ElapsedGameTime.TotalSeconds;
+            if (State.Split("_")[1] == "jump" && CurrentFrame == TotalFrames)
             {
-                currentFrame -= 1;
+                CurrentFrame -= 1;
             }
-            currentFrame %= totalFrames;
+            CurrentFrame %= TotalFrames;
 
             // get current spritesheet
-            texture = spriteSheet[state][(int) currentFrame];
+            Texture = SpriteSheet[State][(int)CurrentFrame];
             UpdateSprite();
 
         }

@@ -11,70 +11,83 @@ namespace WitchWay
 {
     internal class SpriteGroup
     {
-        private List<Sprite> sprites;
+        private List<Sprite> Sprites;
 
         public SpriteGroup()
         {
-            this.sprites = new List<Sprite>();
+            this.Sprites = new List<Sprite>();
         }
 
-        public SpriteGroup(Sprite sprite)
+        public SpriteGroup(Sprite Sprite)
         {
-            sprites.Add(sprite);
+            Sprites.Add(Sprite);
         }
 
-        public void Add(Sprite sprite)
+        public void Add(Sprite Sprite)
         {
-            sprites.Add(sprite);
+            Sprites.Add(Sprite);
         }
 
-        public void Remove(Sprite sprite)
+        public void Remove(Sprite Sprite)
         {
-            sprites.Remove(sprite);
+            Sprites.Remove(Sprite);
         }
 
         public void Clear()
         {
-            sprites.Clear();
+            Sprites.Clear();
         }
 
-        public bool Contains(Sprite sprite)
+        public bool Contains(Sprite Sprite)
         {
-            return sprites.Contains(sprite);
+            return Sprites.Contains(Sprite);
         }
 
-        public List<Sprite> Collision(Sprite sprite)
+        public List<Sprite> Collision(Vector2 Point)
         {
-            List<Sprite> collisions = new List<Sprite>();
-            foreach (Sprite s in sprites)
+            List<Sprite> Collisions = new List<Sprite>();
+            foreach (Sprite s in Sprites)
             {
-                if (s.collides(sprite.rect))
+                if (s.collides(Point))
                 {
-                    collisions.Add(s);
+                    Collisions.Add(s);
                 }
             }
-            return collisions;
+            return Collisions;
         }
 
-        public void Draw(SpriteBatch _spriteBatch, Player player)
+        public List<Sprite> Collision(Sprite Sprite)
         {
-            int offsetX = player.sprite.rect.Center.X * Settings.scale - Settings.WIDTH / 2;
-            int offsetY = player.sprite.rect.Center.Y * Settings.scale - Settings.HEIGHT / 2;
-
-            for (int layer = 0; layer < Settings.zLayers; layer++)
+            List<Sprite> Collisions = new List<Sprite>();
+            foreach (Sprite s in Sprites)
             {
-                foreach (Sprite sprite in sprites.OrderBy(x => -(x.rect.Bottom)))
+                if (s.collides(Sprite.Rect))
                 {
-                    if (sprite.z == layer && sprite.texture != null)
+                    Collisions.Add(s);
+                }
+            }
+            return Collisions;
+        }
+
+        public void Draw(SpriteBatch _spriteBatch, Player Player)
+        {
+            int OffsetX = (Player.Sprite.Rect.Center.X * Settings.Scale) - (Settings.WIDTH / 2);
+            int OffsetY = (Player.Sprite.Rect.Center.Y * Settings.Scale) - (Settings.HEIGHT / 2);
+
+            for (int Layer = 0; Layer < Settings.ZLayers; Layer++)
+            {
+                foreach (Sprite Sprite in Sprites.OrderBy(x => -(x.Rect.Bottom)))
+                {
+                    if (Sprite.Z == Layer && Sprite.Texture != null)
                     {
-                        Rectangle offsetRect = sprite.rect;
-                        offsetRect.X *= Settings.scale;
-                        offsetRect.Y *= Settings.scale;
-                        offsetRect.X -= offsetX;
-                        offsetRect.Y -= offsetY;
-                        offsetRect.Width = sprite.rect.Width * Settings.scale;
-                        offsetRect.Height = sprite.rect.Height * Settings.scale;
-                        _spriteBatch.Draw(sprite.texture, offsetRect, sprite.source, Color.White);   
+                        Rectangle OffsetRect = Sprite.Rect;
+                        OffsetRect.X *= Settings.Scale;
+                        OffsetRect.Y *= Settings.Scale;
+                        OffsetRect.X -= OffsetX;
+                        OffsetRect.Y -= OffsetY;
+                        OffsetRect.Width = Sprite.Rect.Width * Settings.Scale;
+                        OffsetRect.Height = Sprite.Rect.Height * Settings.Scale;
+                        _spriteBatch.Draw(Sprite.Texture, OffsetRect, Sprite.Source, Color.White);   
                     }
                 }
             }

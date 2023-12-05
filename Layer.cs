@@ -8,18 +8,18 @@ namespace WitchWay
 {
     internal class Layer
     {
-        public int[,] data;
+        public int[,] Data;
         public int id;
         public string name;
-        public int width;
-        public int height;
+        public int Width;
+        public int Height;
         public Layer(int[,] data, int id, string name, int width, int height) 
         {
-            this.data = data;
+            this.Data = data;
             this.id = id;
             this.name = name;
-            this.width = width;
-            this.height = height;
+            this.Width = width;
+            this.Height = height;
         }
     }
 }

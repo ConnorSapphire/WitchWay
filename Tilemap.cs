@@ -14,46 +14,46 @@ namespace WitchWay
     {
         public int Width;
         public int Height;
-        public int tileWidth;
-        public int tileHeight;
-        public Dictionary<int, Tileset> tilesets;
-        public Dictionary<string, Layer> layers;
-        public Dictionary<string, ObjectGroup> objectsGroups;
-        public Tilemap(int Width, int Height, int tileWidth, int tileHeight, Dictionary<int, Tileset> tilesets, Dictionary<string, Layer> layers, Dictionary<string, ObjectGroup> objectGroups) {
+        public int TileWidth;
+        public int TileHeight;
+        public Dictionary<int, Tileset> TileSets;
+        public Dictionary<string, Layer> Layers;
+        public Dictionary<string, ObjectGroup> ObjectGroups;
+        public Tilemap(int Width, int Height, int TileWidth, int TileHeight, Dictionary<int, Tileset> TileSets, Dictionary<string, Layer> Layers, Dictionary<string, ObjectGroup> ObjectGroups) {
             this.Width = Width;
             this.Height = Height;
-            this.tileWidth = tileWidth;
-            this.tileHeight = tileHeight;
-            this.tilesets = tilesets;
-            this.layers = layers;
-            this.objectsGroups = objectGroups;
+            this.TileWidth = TileWidth;
+            this.TileHeight = TileHeight;
+            this.TileSets = TileSets;
+            this.Layers = Layers;
+            this.ObjectGroups = ObjectGroups;
         }
 
-        public List<Sprite> GetLayer(string name)
+        public List<Sprite> GetLayer(string Name)
         {
-            Layer layer = layers[name];
+            Layer Layer = Layers[Name];
 
-            Dictionary<int, Tileset> set = new Dictionary<int, Tileset>();
-            List<Sprite> sprites = new List<Sprite>();
-            for (int i = 0; i < layer.height; i++)
+            Dictionary<int, Tileset> Set = new Dictionary<int, Tileset>();
+            List<Sprite> Sprites = new List<Sprite>();
+            for (int i = 0; i < Layer.Height; i++)
             {
-                for (int j = 0; j < layer.width; j++)
+                for (int j = 0; j < Layer.Width; j++)
                 {
-                    int gid = layer.data[i, j];
+                    int gid = Layer.Data[i, j];
                     if (gid == 0)
                     {
                         continue;
                     }
-                    if (set.ContainsKey(gid))
+                    if (Set.ContainsKey(gid))
                     {
-                        int col = (gid - set[gid].firstgid) % set[gid].columns;
-                        int row = (gid - set[gid].firstgid) / set[gid].columns;
-                        sprites.Add(new Sprite(set[gid].texture, new Rectangle(j * tileWidth, i * tileHeight, tileWidth, tileHeight), new Rectangle(col * tileWidth, row * tileHeight, tileWidth, tileHeight)));
+                        int col = (gid - Set[gid].firstgid) % Set[gid].Columns;
+                        int row = (gid - Set[gid].firstgid) / Set[gid].Columns;
+                        Sprites.Add(new Sprite(Set[gid].Texture, new Rectangle(j * TileWidth, i * TileHeight, TileWidth, TileHeight), new Rectangle(col * TileWidth, row * TileHeight, TileWidth, TileHeight)));
                     } 
                     else
                     {
                         int key = 0;
-                        foreach (int firstgid in tilesets.Keys)
+                        foreach (int firstgid in TileSets.Keys)
                         {
                             if (firstgid <= gid)
                             {
@@ -64,49 +64,49 @@ namespace WitchWay
                                 break;
                             }
                         }
-                        set.Add(gid, tilesets[key]);
-                        int col = (gid - set[gid].firstgid) % set[gid].columns;
-                        int row = (gid - set[gid].firstgid) / set[gid].columns;
-                        sprites.Add(new Sprite(set[gid].texture, new Rectangle(j * tileWidth, i * tileHeight, tileWidth, tileHeight), new Rectangle(col* tileWidth, row * tileHeight, tileWidth, tileHeight)));
+                        Set.Add(gid, TileSets[key]);
+                        int col = (gid - Set[gid].firstgid) % Set[gid].Columns;
+                        int row = (gid - Set[gid].firstgid) / Set[gid].Columns;
+                        Sprites.Add(new Sprite(Set[gid].Texture, new Rectangle(j * TileWidth, i * TileHeight, TileWidth, TileHeight), new Rectangle(col* TileWidth, row * TileHeight, TileWidth, TileHeight)));
                     }
                 }
             }
 
-            return sprites;           
+            return Sprites;           
         }
 
-        public ObjectGroup GetObjectGroup(string name)
+        public ObjectGroup GetObjectGroup(string Name)
         {
-            return objectsGroups[name];
+            return ObjectGroups[Name];
         }
 
-        public List<Sprite> GetSpritesFromObjectGroup(string name)
+        public List<Sprite> GetSpritesFromObjectGroup(string Name)
         {
-            ObjectGroup objectGroup = objectsGroups[name];
-            List<TilemapObject> images = new List<TilemapObject>();
-            foreach (TilemapObject obj in objectGroup.objects)
+            ObjectGroup ObjectGroup = ObjectGroups[Name];
+            List<TilemapObject> Images = new List<TilemapObject>();
+            foreach (TilemapObject Obj in ObjectGroup.objects)
             {
-                if (obj.type == "image")
+                if (Obj.Type == "image")
                 {
-                    images.Add(obj);
+                    Images.Add(Obj);
                 }
             }
-            List<Sprite> sprites = new List<Sprite>();
-            Dictionary<int, Tileset> set = new Dictionary<int, Tileset>();
-            foreach (TilemapObject obj in images)
+            List<Sprite> Sprites = new List<Sprite>();
+            Dictionary<int, Tileset> Set = new Dictionary<int, Tileset>();
+            foreach (TilemapObject Obj in Images)
             {
-                if (set.ContainsKey(obj.gid))
+                if (Set.ContainsKey(Obj.gid))
                 {
-                    int col = (obj.gid - set[obj.gid].firstgid) % set[obj.gid].columns;
-                    int row = (obj.gid - set[obj.gid].firstgid) / set[obj.gid].columns;
-                    sprites.Add(new Sprite(set[obj.gid].texture, new Rectangle(obj.x, obj.y - obj.height, obj.width, obj.height), new Rectangle(col * obj.width, row * obj.height, obj.width, obj.height)));
+                    int col = (Obj.gid - Set[Obj.gid].firstgid) % Set[Obj.gid].Columns;
+                    int row = (Obj.gid - Set[Obj.gid].firstgid) / Set[Obj.gid].Columns;
+                    Sprites.Add(new Sprite(Set[Obj.gid].Texture, new Rectangle(Obj.X, Obj.Y - Obj.Height, Obj.Width, Obj.Height), new Rectangle(col * Obj.Width, row * Obj.Height, Obj.Width, Obj.Height)));
                 }
                 else
                 {
                     int key = 1;
-                    foreach (int firstgid in tilesets.Keys)
+                    foreach (int firstgid in TileSets.Keys)
                     {
-                        if (firstgid <= obj.gid)
+                        if (firstgid <= Obj.gid)
                         {
                             key = firstgid;
                         }
@@ -115,13 +115,13 @@ namespace WitchWay
                             break;
                         }
                     }
-                    set.Add(obj.gid, tilesets[key]);
-                    int col = (obj.gid - set[obj.gid].firstgid) % set[obj.gid].columns;
-                    int row = (obj.gid - set[obj.gid].firstgid) / set[obj.gid].columns;
-                    sprites.Add(new Sprite(set[obj.gid].texture, new Rectangle(obj.x, obj.y - obj.height, obj.width, obj.height), new Rectangle(col * obj.width, row * obj.height, obj.width, obj.height)));
+                    Set.Add(Obj.gid, TileSets[key]);
+                    int col = (Obj.gid - Set[Obj.gid].firstgid) % Set[Obj.gid].Columns;
+                    int row = (Obj.gid - Set[Obj.gid].firstgid) / Set[Obj.gid].Columns;
+                    Sprites.Add(new Sprite(Set[Obj.gid].Texture, new Rectangle(Obj.X, Obj.Y - Obj.Height, Obj.Width, Obj.Height), new Rectangle(col * Obj.Width, row * Obj.Height, Obj.Width, Obj.Height)));
                 }
             }
-            return sprites;
+            return Sprites;
         }
     }
 }

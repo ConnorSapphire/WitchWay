@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WitchWay")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abb3223631498e80554dc9b283b2f3dc9b46cb33")]
 [assembly: System.Reflection.AssemblyProductAttribute("WitchWay")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WitchWay")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

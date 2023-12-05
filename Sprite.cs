@@ -11,14 +11,14 @@ namespace WitchWay
 {
     internal class Sprite
     {
-        public Texture2D texture;
-        public Rectangle rect;
-        public Rectangle source;
-        public Vector2 pos;
-        public Vector2 size;
+        public Texture2D Texture;
+        public Rectangle Rect;
+        public Rectangle Source;
+        public Vector2 Position;
+        public Vector2 Size;
         public int Height;
         public int Width;
-        public int z;
+        public int Z;
 
         public Sprite()
         {
@@ -26,60 +26,67 @@ namespace WitchWay
 
         public Sprite(Texture2D texture, Rectangle rect, int z = 0)
         {
-            this.texture = texture;
-            this.rect = rect;
-            this.pos = new Vector2(rect.Left, rect.Top);
-            this.size = new Vector2(rect.Width, rect.Height);
+            this.Texture = texture;
+            this.Rect = rect;
+            this.Position = new Vector2(rect.Left, rect.Top);
+            this.Size = new Vector2(rect.Width, rect.Height);
             this.Width = rect.Width;
             this.Height = rect.Height;
-            this.source = new Rectangle(0, 0, Width, Height);
-            this.z = z;
+            this.Source = new Rectangle(0, 0, Width, Height);
+            this.Z = z;
         }
 
         public Sprite(Texture2D texture, Rectangle rect, Rectangle source, int z = 0)
         {
-            this.texture = texture;
-            this.rect = rect;
-            this.pos = new Vector2(rect.Left, rect.Top);
-            this.size = new Vector2(rect.Width, rect.Height);
+            this.Texture = texture;
+            this.Rect = rect;
+            this.Position = new Vector2(rect.Left, rect.Top);
+            this.Size = new Vector2(rect.Width, rect.Height);
             this.Width = rect.Width;
             this.Height = rect.Height;
-            this.source = source;
-            this.z = z;
+            this.Source = source;
+            this.Z = z;
         }
 
         public Sprite(Texture2D texture, Vector2 pos, int z = 0)
         {
-            this.texture = texture;
-            this.pos = pos;
-            this.size = new Vector2(texture.Width, texture.Height);
-            this.rect = new Rectangle((int) pos.X, (int) pos.Y, (int) size.X, (int) size.Y);
-            this.Width = rect.Width;
-            this.Height = rect.Height;
-            this.source = new Rectangle(0, 0, Width, Height);
-            this.z = z;
+            this.Texture = texture;
+            this.Position = pos;
+            this.Size = new Vector2(texture.Width, texture.Height);
+            this.Rect = new Rectangle((int) pos.X, (int) pos.Y, (int) Size.X, (int) Size.Y);
+            this.Width = Rect.Width;
+            this.Height = Rect.Height;
+            this.Source = new Rectangle(0, 0, Width, Height);
+            this.Z = z;
         }
 
         public Sprite(Texture2D texture, Vector2 pos, Vector2 size, int z = 0)
         {
-            this.texture = texture;
-            this.pos = pos;
-            this.size = size;
-            this.rect = new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y);
-            this.Width = rect.Width;
-            this.Height = rect.Height;
-            this.source = new Rectangle(0, 0, Width, Height);
-            this.z = z;
+            this.Texture = texture;
+            this.Position = pos;
+            this.Size = size;
+            this.Rect = new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y);
+            this.Width = Rect.Width;
+            this.Height = Rect.Height;
+            this.Source = new Rectangle(0, 0, Width, Height);
+            this.Z = z;
         }
 
         public bool collides(Rectangle rect)
         {
-            return this.rect.Intersects(rect);
+            return this.Rect.Intersects(rect);
         }
 
         public bool collides(Vector2 point)
         {
-            return this.rect.Intersects(new Rectangle((int) point.X, (int) point.Y, 1, 1));
+            if (point.X > Rect.X && point.X < Rect.X + Rect.Width)
+            {
+                if (point.Y > Rect.Y && point.Y <= Rect.Y + Rect.Height)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

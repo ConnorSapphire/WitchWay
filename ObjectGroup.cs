@@ -25,7 +25,7 @@ namespace WitchWay
             List<Vector2> positions = new List<Vector2>();
             foreach (TilemapObject obj in objects)
             {
-                positions.Add(new Vector2(obj.x, obj.y));
+                positions.Add(new Vector2(obj.X, obj.Y));
             }
             return positions;
         }

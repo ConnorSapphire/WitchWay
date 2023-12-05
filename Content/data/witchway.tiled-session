@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "level.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -28,11 +28,11 @@
             "scaleInEditor": 1
         },
         "level.tmx": {
-            "scale": 16,
-            "selectedLayer": 1,
+            "scale": 5.5,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 82.90625,
-                "y": 294.84375
+                "x": 131.72727272727275,
+                "y": 280.6363636363636
             }
         }
     },
@@ -41,6 +41,7 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
+        "level.tmx"
     ],
     "project": "witchway.tiled-project",
     "recentFiles": [

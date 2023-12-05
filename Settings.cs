@@ -6,21 +6,25 @@ namespace WitchWay
     {
         public static int WIDTH;
         public static int HEIGHT;
-        public static int scale = 3;
-        public static int zLayers = 3;
 
-        public static int spriteWidth = 10;
-        public static int spriteHeight = 17;
-        public static int speed = 300;
-        public static int jump = -600;
+        public static int Scale = 5;
+        public static int ZLayers = 3;
 
-        public static Dictionary<string, string> layers = new Dictionary<string, string>
+        public static int SpriteWidth = 10;
+        public static int SpriteHeight = 17;
+
+        public static int Speed = 150;
+        public static int Jump = -300;
+        public static float FallMultiplier = 1.6F;
+        public static int JumpHeight = 200;
+
+        public static Dictionary<string, string> Layers = new Dictionary<string, string>
         {
             { "ground", "ground" },
             { "positions", "positions"}
         };
 
-        public static Dictionary<string, string> objects = new Dictionary<string, string>
+        public static Dictionary<string, string> Objects = new Dictionary<string, string>
         {
             { "player", "Player" }
         };

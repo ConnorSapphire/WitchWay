@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -133,6 +134,56 @@ namespace WitchWay
             Tilemap tilemap = new Tilemap(width, height, tileWidth, tileHeight, tilesets, layers, objectGroups);
 
             return tilemap;
+        }
+
+        public static (bool, Vector2, Sprite, double, double, double) RaycastRect(Rectangle Rect, double Distance, double Direction, SpriteGroup Collidables, int RaycastGap)
+        {
+            (Vector2, Sprite, double) TopLeft = Support.Raycast(Rect.X, Rect.Y, Distance, Direction, Collidables, RaycastGap);
+            (Vector2, Sprite, double) TopRight = Support.Raycast(Rect.X + Rect.Width, Rect.Y, Distance, Direction, Collidables, RaycastGap);
+            (Vector2, Sprite, double) BottomLeft = Support.Raycast(Rect.X, Rect.Y + Rect.Height, Distance, Direction, Collidables, RaycastGap);
+            (Vector2, Sprite, double) BottomRight = Support.Raycast(Rect.X + Rect.Width, Rect.Y + Rect.Height, Distance, Direction, Collidables, RaycastGap);
+
+            if (TopLeft.Item2 != null && TopLeft.Item3 <= TopRight.Item3 && TopLeft.Item3 <= BottomRight.Item3 && TopLeft.Item3 <= BottomLeft.Item3)
+                return (true, TopLeft.Item1, TopLeft.Item2, TopLeft.Item3, 0, 0);
+            else if (TopRight.Item2 != null && TopRight.Item3 <= TopLeft.Item3 && TopRight.Item3 <= BottomRight.Item3 && TopRight.Item3 <= BottomLeft.Item3)
+                return (true, TopRight.Item1, TopRight.Item2, TopRight.Item3, Rect.Width, 0);
+            else if (BottomLeft.Item2 != null && BottomLeft.Item3 <= TopLeft.Item3 && BottomLeft.Item3 <= TopRight.Item3 && BottomLeft.Item3 <= BottomRight.Item3)
+                return (true, BottomLeft.Item1, BottomLeft.Item2, BottomLeft.Item3, 0, Rect.Height);
+            else if (BottomRight.Item2 != null && BottomRight.Item3 <= TopLeft.Item3 && BottomRight.Item3 <= TopRight.Item3 && BottomRight.Item3 <= BottomLeft.Item3)
+                return (true, BottomRight.Item1, BottomRight.Item2, BottomRight.Item3, Rect.Width, Rect.Height);
+
+            return (false, TopLeft.Item1, null, 0, 0, 0);
+        }
+
+        public static (Vector2, Sprite, double) Raycast(double X, double Y, double Distance, double Direction, SpriteGroup Collidables, int RaycastGap)
+        {
+            Vector2 point = new Vector2();
+            Sprite collision = null;
+
+            for (int i = 0; i < Distance; i += RaycastGap)
+            {
+                (point, collision) = CheckCollision(X, Y, i, Direction, Collidables);
+                if (collision != null)
+                {
+                    return (point, collision, i);
+                }
+            }
+            
+            (point, collision) = CheckCollision(X, Y, Distance, Direction, Collidables);
+            return (point, collision, Distance);
+        }
+
+        private static (Vector2, Sprite) CheckCollision(double x, double y, double distance, double direction, SpriteGroup collidables)
+        {
+            x +=  (distance * Math.Cos(direction));
+            y +=  (distance * Math.Sin(direction));
+            Vector2 point = new Vector2((float) x, (float) y);
+            List<Sprite> collisions = collidables.Collision(point);
+            if (collisions.Any())
+            {
+                return (point, collisions.FirstOrDefault()); ;
+            }
+            return (point, null);
         }
     }
 }
